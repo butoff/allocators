@@ -1,4 +1,5 @@
 #include <cstdlib>
+#include <ostream>
 
 extern "C" {
 #include <stdint.h>
@@ -19,6 +20,8 @@ struct Buffer {
 
     std::size_t getFreeBytes() const;
 
+    std::size_t getFullBytes() const;
+
     Buffer* getNext() const;
 
     void setNext(Buffer* next);
@@ -27,15 +30,19 @@ struct Buffer {
 
     void* getDataPtr() const;
 
+    static Buffer* getBufferByDataPtr(void* data_ptr);
+
+    Buffer* getLowerNeighbor() const;
+
+    Buffer* getHigherNeighbor() const;
+
+    void dump(std::ostream &os) const;
+
   private:
 
     void init(std::size_t full_size, bool free, Buffer* next);
 
     Buffer** getTail() const;
-
-    Buffer* lower_neighbor() const;
-
-    Buffer* higher_neighbor() const;
 
     friend void inner_test();
 

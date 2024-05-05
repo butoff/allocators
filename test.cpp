@@ -155,6 +155,15 @@ void outer_test() {
         }
     }
 
+    buf = sralloc(100);
+    mysetup(buf, 100);
+    // HERE >>>>>>>>>
+    void* p = myalloc(36);
+    // <<<<<<<<<<<<<<
+    //mydump();
+    //myfree(p);
+    (void)p;
+
     buf = sralloc(0);
     assert(buf == 0);
     mysetup(buf, 42);

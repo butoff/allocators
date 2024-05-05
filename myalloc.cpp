@@ -57,9 +57,7 @@ Buffer* Buffer::allocate(std::size_t size) {
     size = p_size * sizeof(void*);
 
     Buffer* buf = new(ptr) Buffer(full_size_for_allocated_buffer);
-    // HERE >>>>>>>>>>>
     assert(buf->getTail() == tail);
-    // <<<<<<<<<<<<<<<<
     return buf;
 }
 
@@ -172,19 +170,14 @@ void myfree(void* p) {
     assert(!buffer->isFree());
 /**/
     std::size_t new_size = buffer->getFullBytes();
-std::cerr << new_size << std::endl;
     Buffer* higher = buffer;
     if (buffer->getHigherNeighbor() && buffer->getHigherNeighbor()->isFree()) {
         higher = buffer->getHigherNeighbor();
         new_size += higher->getFullBytes();
-std::cerr << new_size << std::endl;
     }
-std::cerr << 11111 << std::endl;
     if (buffer->getLowerNeighbor() && buffer->getLowerNeighbor()->isFree()) {
-std::cerr << 22222 << std::endl;
         buffer = buffer->getLowerNeighbor();
         new_size += buffer->getFullBytes();
-std::cerr << new_size << std::endl;
     }
 
     Buffer *new_free = new(buffer) Buffer(new_size, _free_buffers_head);

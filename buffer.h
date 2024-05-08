@@ -18,6 +18,8 @@ struct Buffer {
 
     bool isFree() const;
 
+    void setFree(bool free);
+
     std::size_t getFreeBytes() const;
 
     std::size_t getFullBytes() const;

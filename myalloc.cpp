@@ -24,6 +24,14 @@ bool Buffer::isFree() const {
     return _tail & 1;
 }
 
+void Buffer::setFree(bool free) {
+    if (free) {
+        _tail |= 1;
+    } else {
+        _tail &= ~1;
+    }
+}
+
 std::size_t Buffer::getFreeBytes() const {
     assert(isFree());
     return getFullBytes() - sizeof(Buffer) - sizeof(void*);
@@ -51,7 +59,14 @@ Buffer* Buffer::allocate(std::size_t size) {
     std::size_t p_size = size / sizeof(void*) + (size % sizeof(void*) ? 1 : 0) + 2;
     std::size_t full_size_for_allocated_buffer = p_size * sizeof(void*);
 
-    init(getFullBytes() - full_size_for_allocated_buffer, true, getNext());
+    std::size_t rest = getFullBytes() - full_size_for_allocated_buffer;
+    if (rest <= 3 * sizeof(void*)) {
+        // allocate the whole buffer
+        setFree(false);
+        return this;
+    }
+
+    init(rest, true, getNext());
     void* ptr = getHigherNeighbor();
 
     size = p_size * sizeof(void*);
@@ -157,7 +172,7 @@ void* myalloc(std::size_t size) {
         if (prev) {
             prev->setNext(buf->getNext());
         } else {
-            prev = buf->getNext();
+            _free_buffers_head = buf->getNext();
         }
     }
 

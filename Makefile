@@ -8,3 +8,10 @@ $(TEST_BINARY): buffer.h myalloc.h myalloc.cpp test.cpp
 
 clean:
 	rm $(TEST_BINARY)
+
+.PHONY: release
+
+release: release/release
+
+release/release: release/release.cpp
+	g++ -std=c++03 -Wall -Werror $^ -o $@
